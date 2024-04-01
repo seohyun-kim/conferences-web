@@ -4,9 +4,15 @@ import { Conference } from '../entity/Conference';
 
 const router = Router();
 
+
 router.post('/', async (req, res) => {
   const conferenceRepository = getRepository(Conference);
-  const newConference = conferenceRepository.create(req.body);
+  const { conference_start, conference_end, ...otherFields } = req.body;
+  const newConference = conferenceRepository.create({
+      ...otherFields,
+      conference_start: new Date(conference_start),
+      conference_end: new Date(conference_end)
+  });
 
   try {
       const result = await conferenceRepository.save(newConference);

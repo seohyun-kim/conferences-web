@@ -12,9 +12,8 @@ createConnection().then(async connection => {
   app.use(bodyParser.json());
 
   app.use('/api/conferences', conferenceRoutes);
+  app.use(express.static('public'));
 
-  // 정적 파일 제공 설정
-  app.use(express.static(path.join(__dirname, '../public')));
 
   app.listen(3000, () => {
     console.log('Server running on port 3000');

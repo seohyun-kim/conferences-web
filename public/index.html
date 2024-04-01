@@ -8,23 +8,24 @@
 </head>
 <body>
     <h1>Conference Management</h1>
-    <form id="conferenceForm">
-        <label for="name">Conference Name:</label>
-        <input type="text" id="name" name="name" required><br>
-        <label for="abstractDue">Abstract Due:</label>
-        <input type="datetime-local" id="abstractDue" name="abstractDue" required><br>
-        <label for="fullPaperDue">Full Paper Due:</label>
-        <input type="datetime-local" id="fullPaperDue" name="fullPaperDue" required><br>
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" required><br>
-        <label for="conferenceStart">Conference Start:</label>
-        <input type="datetime-local" id="conferenceStart" name="conferenceStart" required><br>
-        <label for="conferenceEnd">Conference End:</label>
-        <input type="datetime-local" id="conferenceEnd" name="conferenceEnd" required><br>
-        <button type="submit">Create Conference</button>
-    </form>
-    <div id="conferenceList"></div>
+    <button id="createConferenceBtn">Create Conference</button>
+    <table id="conferenceTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Abstract Due</th>
+                <th>Full Paper Due</th>
+                <th>Location</th>
+                <th>Conference Start</th>
+                <th>Conference End</th>
+            </tr>
+        </thead>
+        <tbody id="conferenceTableBody">
+            <!-- Conference data will be dynamically added here -->
+        </tbody>
+    </table>
 
-    <script src="scripts.ts"></script>
+    <script src="script.js"></script>
 </body>
 </html>

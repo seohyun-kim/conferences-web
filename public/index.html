@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Conference Management</h1>
+    <form id="conferenceForm">
+        <label for="name">Conference Name:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="abstractDue">Abstract Due:</label>
+        <input type="datetime-local" id="abstractDue" name="abstractDue" required><br>
+        <label for="fullPaperDue">Full Paper Due:</label>
+        <input type="datetime-local" id="fullPaperDue" name="fullPaperDue" required><br>
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required><br>
+        <label for="conferenceStart">Conference Start:</label>
+        <input type="datetime-local" id="conferenceStart" name="conferenceStart" required><br>
+        <label for="conferenceEnd">Conference End:</label>
+        <input type="datetime-local" id="conferenceEnd" name="conferenceEnd" required><br>
+        <button type="submit">Create Conference</button>
+    </form>
+    <div id="conferenceList"></div>
+
+    <script src="scripts.ts"></script>
+</body>
+</html>

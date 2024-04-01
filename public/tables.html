@@ -101,7 +101,7 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Tables</h1>
+                <h1 class="mt-4">Target Conferences</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
                     <li class="breadcrumb-item active">Tables</li>
@@ -116,10 +116,10 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
-                        DataTable Example
+                        List of Conferences
                     </div>
                     <div class="card-body">
-                        <table id="datatablesSimple" class="table">
+                        <table id="conferenceTable" class="table">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -131,7 +131,6 @@
                                 </tr>
                             </thead>
                             <tbody id="conferenceData">
-                                <!-- Conference data will be dynamically inserted here -->
                             </tbody>
                         </table>
                     </div>
@@ -184,5 +183,6 @@
     // Call the function to fetch and populate conference data when the page loads
     window.onload = fetchConferenceData;
 </script>
+
 </body>
 </html>

@@ -23,9 +23,13 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  const conferenceRepository = getRepository(Conference);
-  const conferences = await conferenceRepository.find();
-  res.json(conferences);
+  try {
+      const conferenceRepository = getRepository(Conference);
+      const conferences = await conferenceRepository.find();
+      res.status(200).json(conferences);
+  } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 router.get('/:id', async (req, res) => {

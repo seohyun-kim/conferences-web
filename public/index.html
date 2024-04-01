@@ -10,6 +10,11 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                fetchConferenceData();
+            });
+        </script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -97,7 +102,7 @@
                             </a>
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Tables
+                                Target Conferences
                             </a>
                         </div>
                     </div>
@@ -117,7 +122,7 @@
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Primary Card</div>
+                                    <div class="card-body">Upcoming Due</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -178,7 +183,7 @@
                                 DataTable Example
                             </div>
                             <div class="card-body">
-                                <table id="conferenceData">
+                                <table id="datatablesSimple" class="table">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
@@ -189,6 +194,7 @@
                                             <th>Conference End</th>
                                         </tr>
                                     </thead>
+                                    <tbody id="conferenceData">
                                     </tbody>
                                 </table>
                             </div>

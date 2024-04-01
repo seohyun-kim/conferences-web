@@ -17,7 +17,9 @@ export class Conference {
   @Column()
   location?: string;
 
-  @Column('datetime')
-  conference_date?: Date;
-}
+  @Column('datetime', { nullable: true })
+  conference_start?: Date;
 
+  @Column('datetime', { nullable: true })
+  conference_end?: Date;
+}

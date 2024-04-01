@@ -6,5 +6,11 @@
   },
   "scripts": {
     "start": "nodemon src/index.ts --exec ts-node"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "nodemon": "^3.1.0"
   }
 }

@@ -217,7 +217,7 @@
 
                         const cardContent = `
                             <div class="card ${cardColorClass} text-white mb-4">
-                                <div class="card-body" id="due${index + 1}">D-DAY: ${calculateDaysLeft(new Date(conference.full_paper_due))} ${conference.name}</div>
+                                <div class="card-body" id="due${index + 1}">[D-${calculateDaysLeft(new Date(conference.full_paper_due))}] ${conference.name}</div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="${conference.url}" id="link${index + 1}" target="_blank">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>

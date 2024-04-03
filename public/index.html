@@ -10,16 +10,11 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                fetchConferenceData();
-            });
-        </script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.html">Start Bootstrap</a>
+            <a class="navbar-brand ps-3" href="index.html">CELL DGIST</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -108,7 +103,7 @@
                     </div>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        Start Bootstrap
+                        CELL DGIST
                     </div>
                 </nav>
             </div>
@@ -183,7 +178,7 @@
                                 Target Conferences
                             </div>
                             <div class="card-body">
-                                <table id="conferenceData" class="table">
+                                <table id="tableConferences" class="table">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
@@ -229,8 +224,8 @@
                     const response = await fetch('http://localhost:3000/api/conferences');
                     const conferences = await response.json();
                     const tableBody = document.getElementById('conferenceData');
-                    
-                        conferences.forEach(conference => {
+
+                    conferences.forEach(conference => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${conference.name}</td>
@@ -240,13 +235,17 @@
                             <td>${new Date(conference.conference_start).toLocaleDateString()}</td>
                             <td>${new Date(conference.conference_end).toLocaleDateString()}</td>
                         `;
+                        // Add event listener to each row to open the URL in a new tab when clicked
+                        row.addEventListener('click', () => {
+                            window.open(conference.url, '_blank');
+                        });
                         tableBody.appendChild(row);
                     });
                 } catch (error) {
                     console.error('Error fetching conference data:', error);
                 }
             }
-    
+            
             // Call the function to fetch and populate conference data when the page loads
             window.onload = fetchConferenceData;
         </script>

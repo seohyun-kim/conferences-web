@@ -114,10 +114,11 @@
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
+
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Upcoming Due</div>
+                                <div class="card bg-primary text-white mb-4" id="firstCard">
+                                    <div class="card-body" id="firstCardBody">Loading...</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -125,8 +126,8 @@
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Warning Card</div>
+                                <div class="card bg-warning text-white mb-4" id="secondCard">
+                                    <div class="card-body" id="secondCardBody">Loading...</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -134,8 +135,8 @@
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">Success Card</div>
+                                <div class="card bg-success text-white mb-4" id="thirdCard">
+                                    <div class="card-body" id="thirdCardBody">Loading...</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -143,8 +144,8 @@
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">Danger Card</div>
+                                <div class="card bg-danger text-white mb-4" id="fourthCard">
+                                    <div class="card-body" id="fourthCardBody">Loading...</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -152,34 +153,18 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="row">
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-area me-1"></i>
-                                        Area Chart Example
-                                    </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Bar Chart Example
-                                    </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
-                                </div>
-                            </div>
-                        </div> -->
+                        
+                        
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 Target Conferences
+                                   (각 항목을 클릭하면 컨퍼런스 페이지로 이동합니다.)
                             </div>
                             <div class="card-body">
                                 <table id="tableConferences" class="table">
                                     <thead>
+
                                         <tr>
                                             <th>Name</th>
                                             <th>Abstract Due</th>
@@ -248,6 +233,49 @@
             
             // Call the function to fetch and populate conference data when the page loads
             window.onload = fetchConferenceData;
+        </script>
+        <script>
+            async function fetchConferenceData() {
+                try {
+                    const response = await fetch('http://localhost:3000/api/conferences');
+                    const conferences = await response.json();
+                    
+                    // Sort conferences by the difference between full_paper_due and current date
+                    conferences.sort((a, b) => {
+                        const today = new Date();
+                        const diffA = Math.abs(today - new Date(a.full_paper_due));
+                        const diffB = Math.abs(today - new Date(b.full_paper_due));
+                        return diffA - diffB;
+                    });
+                    
+                    // Select the first 4 conferences
+                    const selectedConferences = conferences.slice(0, 4);
+
+                    selectedConferences.forEach((conference, index) => {
+                        const cardBody = document.getElementById(`${ordinalSuffix(index + 1)}CardBody`);
+                        
+                        const today = new Date();
+                        const dueDate = new Date(conference.full_paper_due);
+                        const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+
+                        cardBody.innerHTML = `
+                            <p>${diffDays} days until ${conference.name}</p>
+                        `;
+                    });
+                } catch (error) {
+                    console.error('Error fetching conference data:', error);
+                }
+            }
+
+            // Function to add ordinal suffix to a number
+            function ordinalSuffix(num) {
+                const suffixes = ["th", "st", "nd", "rd"];
+                const v = num % 100;
+                return num + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+            }
+
+            // Call the function to fetch and populate conference data when the page loads
+            document.addEventListener("DOMContentLoaded", fetchConferenceData);
         </script>
     </body>
 </html>

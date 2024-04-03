@@ -22,4 +22,7 @@ export class Conference {
 
   @Column('datetime', { nullable: true })
   conference_end?: Date;
+
+  @Column({ nullable: true })
+  url?: string;
 }

@@ -179,26 +179,34 @@
                     const response = await fetch('http://localhost:3000/api/conferences');
                     const conferences = await response.json();
                     const tableBody = document.getElementById('conferenceData');
-
+    
                     conferences.forEach(conference => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${conference.name}</td>
-                            <td>${new Date(conference.abstract_due).toLocaleDateString()}</td>
-                            <td>${new Date(conference.full_paper_due).toLocaleDateString()}</td>
+                            <td>${formatDateTime(conference.abstract_due)}</td>
+                            <td>${formatDateTime(conference.full_paper_due)}</td>
                             <td>${conference.location}</td>
-                            <td>${new Date(conference.conference_start).toLocaleDateString()}</td>
-                            <td>${new Date(conference.conference_end).toLocaleDateString()}</td>
+                            <td>${formatDateTime(conference.conference_start)}</td>
+                            <td>${formatDateTime(conference.conference_end)}</td>
                         `;
-                        // Add event listener to each row to open the URL in a new tab when clicked
-                        row.addEventListener('click', () => {
-                            window.open(conference.url, '_blank');
-                        });
                         tableBody.appendChild(row);
                     });
                 } catch (error) {
                     console.error('Error fetching conference data:', error);
                 }
+            }
+    
+            // Function to format date as yyyy-mm-dd HH:MM:SS
+            function formatDateTime(dateTimeString) {
+                const dateTime = new Date(dateTimeString);
+                const year = dateTime.getFullYear();
+                const month = String(dateTime.getMonth() + 1).padStart(2, '0');
+                const day = String(dateTime.getDate()).padStart(2, '0');
+                const hours = String(dateTime.getHours()).padStart(2, '0');
+                const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+                const seconds = String(dateTime.getSeconds()).padStart(2, '0');
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
             }
             
             // Call the function to fetch and populate conference data when the page loads

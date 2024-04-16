@@ -28,7 +28,6 @@ jobs:
           tags: seohyun-kim/conferences-web:latest
 
       - name: Deploy to server
-        run: ssh username@server "docker pull seohyun-kim/conferences-web:latest && docker run -d seohyun-kim/conferences-web:latest"
-        env:
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} compu@bmw.selen.monster "docker pull seohyun-kim/conferences-web:latest && docker run -d seohyun-kim/conferences-web:latest"
+
 

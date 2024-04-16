@@ -22,15 +22,20 @@ router.post('/', async (req, res) => {
   }
 });
 
+
 router.get('/', async (req, res) => {
   try {
-      const conferenceRepository = getRepository(Conference);
-      const conferences = await conferenceRepository.find();
-      res.status(200).json(conferences);
+    const conferenceRepository = getRepository(Conference);
+    const conferences = await conferenceRepository.createQueryBuilder("conference")
+      .orderBy("conference.full_paper_due", "ASC") // ASC 또는 DESC를 사용하여 오름차순 또는 내림차순으로 정렬할 수 있습니다.
+      .getMany();
+    res.status(200).json(conferences);
   } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 
 router.get('/:id', async (req, res) => {
   const conferenceRepository = getRepository(Conference);

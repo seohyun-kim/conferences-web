@@ -185,7 +185,7 @@
                         row.innerHTML = `
                             <td>${conference.name}</td>
                             <td>${new Date(conference.abstract_due).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
-                            <td>${new Date(conference.full_paper_due).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+                            <td style="background-color: LightYellow;">${new Date(conference.full_paper_due).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
                             <td>${conference.location}</td>
                             <td>${new Date(conference.conference_start).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
                             <td>${new Date(conference.conference_end).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>

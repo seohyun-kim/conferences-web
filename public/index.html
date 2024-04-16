@@ -184,11 +184,11 @@
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${conference.name}</td>
-                            <td>${new Date(conference.abstract_due).toLocaleDateString()}</td>
-                            <td>${new Date(conference.full_paper_due).toLocaleDateString()}</td>
+                            <td>${new Date(conference.abstract_due).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+                            <td style="background-color: LightYellow;">${new Date(conference.full_paper_due).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
                             <td>${conference.location}</td>
-                            <td>${new Date(conference.conference_start).toLocaleDateString()}</td>
-                            <td>${new Date(conference.conference_end).toLocaleDateString()}</td>
+                            <td>${new Date(conference.conference_start).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+                            <td>${new Date(conference.conference_end).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
                         `;
                         // Add event listener to each row to open the URL in a new tab when clicked
                         row.addEventListener('click', () => {

@@ -116,7 +116,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
-                        List of Conferences
+                        List of Conferences (클릭 시 수정 페이지로 연결됩니다.)
                     </div>
                     <div class="card-body">
                         <table id="tableConferences" class="table">
@@ -168,6 +168,12 @@
 
             conferences.forEach(conference => {
                 const row = document.createElement('tr');
+
+                // Ensure category is an array before calling join
+                const categories = Array.isArray(conference.category)
+                    ? conference.category.join(', ')
+                    : conference.category || 'N/A';
+
                 row.innerHTML = `
                     <td>${conference.name}</td>
                     <td>${new Date(conference.abstract_due).toLocaleDateString()}</td>
@@ -176,19 +182,22 @@
                     <td>${new Date(conference.conference_start).toLocaleDateString()}</td>
                     <td>${new Date(conference.conference_end).toLocaleDateString()}</td>
                     <td>${conference.rank || 'N/A'}</td>
-                    <td>${conference.category ? conference.category.join(', ') : 'N/A'}</td>
+                    <td>${categories}</td>
                     <td>${conference.memo || 'N/A'}</td>
                 `;
+
                 // Add event listener to each row to open the URL in a new tab when clicked
                 row.addEventListener('click', () => {
                     openEditPage(conference.id);
                 });
+
                 tableBody.appendChild(row);
             });
         } catch (error) {
             console.error('Error fetching conference data:', error);
         }
     }
+
 
     // Redirect to the edit page
     function openEditPage(conferenceId) {

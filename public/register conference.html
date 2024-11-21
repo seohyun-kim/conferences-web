@@ -87,11 +87,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="inputURL" type="url" placeholder="Enter conference URL" name="url" required />
-                                                <label for="inputURL">Conference URL 공식 홈페이지를 알려주세요!</label>
+                                                <label for="inputURL">Conference URL 공식 홈페이지</label>
                                             </div>
                                             <div class="form-floating mb-3">
                                                 <select class="form-control" id="inputRank" name="rank">
@@ -102,10 +102,8 @@
                                                 </select>
                                                 <label for="inputRank">Rank</label>
                                             </div>
-                                            
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputCategory" type="text" placeholder="Enter conference category" name="category" />
-                                                <label for="inputCategory">Category (e.g., System, AI)</label>
+                                            <div class="mb-3" id="categoryContainer">
+                                                <label class="form-label">Category (다중선택가능)</label>
                                             </div>
                                             <div class="form-floating mb-3">
                                                 <textarea class="form-control" id="inputMemo" placeholder="Enter additional notes" name="memo" style="height: 100px;"></textarea>
@@ -144,28 +142,84 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
         <script>
-            document.getElementById("conferenceForm").addEventListener("submit", async function(event) {
-                event.preventDefault(); // Prevent default form submission
-                const formData = new FormData(this); // Get form data
-                const jsonObject = {}; // Create empty object to store form data
+            // 페이지 로드 후 체크박스 생성 및 이벤트 리스너 등록
+            document.addEventListener("DOMContentLoaded", function () {
+                    // 체크박스를 생성할 데이터 배열
+                    const categories = ["Systems - Computer architecture", 
+                                        "Systems - High-performance computing",
+                                        "Systems - Design automation",
+                                        "Systems - Operating systems",
+                                        "Systems - Computer architecture",
+                                        "Systems - Measurement & perf. analysis",
+                                        "Systems - Embedded & real-time systems",
+                                        "Systems - Databases",
+                                        "Systems - Mobile computing",
+                                        "Systems - Software engineering",
+                                        "Systems - Computer security",
+                                        "AI - Artificial intelligence",
+                                        "AI - Machine learning",
+                                        "AI - Natural language processing",
+                                        "AI - Computer vision",
+                                        ];
 
-                // Convert FormData to JSON object
-                formData.forEach(function(value, key) {
-                    jsonObject[key] = value;
+                    // HTML 요소에 체크박스 생성
+                    const categoryContainer = document.getElementById("categoryContainer");
+
+                    categories.forEach(category => {
+                        const checkboxDiv = document.createElement("div");
+                        checkboxDiv.classList.add("form-check");
+
+                        const checkboxInput = document.createElement("input");
+                        checkboxInput.type = "checkbox";
+                        checkboxInput.classList.add("form-check-input");
+                        checkboxInput.id = `category${category}`;
+                        checkboxInput.name = "category";
+                        checkboxInput.value = category;
+
+                        const checkboxLabel = document.createElement("label");
+                        checkboxLabel.classList.add("form-check-label");
+                        checkboxLabel.setAttribute("for", `category${category}`);
+                        checkboxLabel.textContent = category;
+
+                        checkboxDiv.appendChild(checkboxInput);
+                        checkboxDiv.appendChild(checkboxLabel);
+
+                        categoryContainer.appendChild(checkboxDiv);
+                    });
                 });
 
-                // Convert JSON object to string
-                const jsonData = JSON.stringify(jsonObject);
-                console.log(jsonData);
 
-                // Send POST request to server
+            document.getElementById("conferenceForm").addEventListener("submit", async function (event) {
+                event.preventDefault(); // 기본 폼 제출 방지
+                const formData = new FormData(this); // 폼 데이터 가져오기
+                const jsonObject = {}; // 데이터 저장 객체
+
+                // Helper function to get selected values from multiple checkboxes
+                function getSelectedCategories() {
+                    const checkboxes = document.querySelectorAll('input[name="category"]:checked');
+                    return Array.from(checkboxes).map(checkbox => checkbox.value);
+                }
+
+                // Get selected categories
+                jsonObject.category = getSelectedCategories();
+
+                // Process other form fields
+                formData.forEach(function (value, key) {
+                    if (key !== "category") {
+                        jsonObject[key] = value;
+                    }
+                });
+
+                console.log(jsonObject); // 디버그용 출력
+
+                // 서버로 데이터 전송
                 try {
                     const response = await fetch("http://localhost:3000/api/conferences", {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
                         },
-                        body: jsonData
+                        body: JSON.stringify(jsonObject),
                     });
 
                     if (!response.ok) {
@@ -174,7 +228,7 @@
 
                     const data = await response.json();
                     console.log("Success:", data);
-                    alert("학회 정보 등록이 완료 되었습니다!");
+                    alert("학회 정보 등록이 완료되었습니다!");
                 } catch (error) {
                     console.error("Error:", error);
                     alert("문제가 발생했습니다 ㅜㅜ");

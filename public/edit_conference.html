@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Edit Conference</title>
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Edit Conference</h2>
+    <form id="editConferenceForm">
+        <div class="form-floating mb-3">
+            <input class="form-control" id="inputName" type="text" name="name" required />
+            <label for="inputName">Conference Name 학회 이름 (eg. DATE 2025)</label>
+        </div>
+        <div class="row mb-3">
+            <!-- Abstract Due Input -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input class="form-control" id="inputAbstractDue" type="datetime-local" name="abstract_due" required />
+                    <label for="inputAbstractDue">Abstract Due 등록 마감일</label>
+                </div>
+            </div>
+            <!-- Abstract Due Timezone -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-control" id="abstractTimeZone" name="abstract_timezone" required>
+                        <option value="UTC">UTC</option>
+                        <option value="Asia/Seoul" selected>KST</option>
+                        <option value="America/Los_Angeles">PST</option>
+                        <option value="Etc/GMT+12">AOE</option>
+                    </select>
+                    <label for="abstractTimeZone">Timezone</label>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <!-- Full Paper Due Input -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input class="form-control" id="inputFullPaperDue" type="datetime-local" name="full_paper_due" required />
+                    <label for="inputFullPaperDue">Full Paper Due 제출 마감일</label>
+                </div>
+            </div>
+            <!-- Full Paper Due Timezone -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-control" id="fullPaperTimeZone" name="full_paper_timezone" required>
+                        <option value="UTC">UTC</option>
+                        <option value="Asia/Seoul" selected>KST</option>
+                        <option value="America/Los_Angeles">PST</option>
+                        <option value="Etc/GMT+12">AOE</option>
+                    </select>
+                    <label for="fullPaperTimeZone">Timezone</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-floating mb-3">
+            <input class="form-control" id="inputLocation" type="text" name="location" required />
+            <label for="inputLocation">Location</label>
+        </div>
+        <div class="row mb-3">
+            <!-- Conference Start -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input class="form-control" id="inputConferenceStart" type="date" name="conference_start" required />
+                    <label for="inputConferenceStart">Conference Start (KST)</label>
+                </div>
+            </div>
+            <!-- Conference End -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input class="form-control" id="inputConferenceEnd" type="date" name="conference_end" required />
+                    <label for="inputConferenceEnd">Conference End (KST)</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-floating mb-3">
+            <input class="form-control" id="inputURL" type="url" name="url" required />
+            <label for="inputURL">Conference URL</label>
+        </div>
+        <div class="form-floating mb-3">
+            <select class="form-control" id="inputRank" name="rank" required>
+                <option value="" disabled>Select Rank</option>
+                <option value="A">Top Tier</option>
+                <option value="B">Second Tier</option>
+                <option value="C">etc.</option>
+            </select>
+            <label for="inputRank">Rank</label>
+        </div>
+        <div class="mb-3" id="categoryContainer">
+            <label class="form-label">Category (다중선택 가능)</label>
+        </div>
+        <div class="form-floating mb-3">
+            <textarea class="form-control" id="inputMemo" name="memo" style="height: 100px;"></textarea>
+            <label for="inputMemo">Memo</label>
+        </div>
+        <div class="mt-4">
+            <button class="btn btn-success" type="submit">Save Changes</button>
+            <a class="btn btn-secondary" href="tables.html">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const conferenceId = urlParams.get("id");
+
+    // 미리 저장된 카테고리
+    const categories = [
+        "Systems - Computer architecture",
+        "Systems - High-performance computing",
+        "Systems - Design automation",
+        "Systems - Operating systems",
+        "Systems - Measurement & perf. analysis",
+        "Systems - Embedded & real-time systems",
+        "Systems - Databases",
+        "Systems - Mobile computing",
+        "Systems - Software engineering",
+        "Systems - Computer security",
+        "AI - Artificial intelligence",
+        "AI - Machine learning",
+        "AI - Natural language processing",
+        "AI - Computer vision",
+    ];
+
+    // 서버에서 데이터 가져오기
+    async function loadConferenceData() {
+        try {
+            const response = await fetch(`http://localhost:3000/api/conferences/${conferenceId}`);
+            const conference = await response.json();
+
+            document.getElementById("inputName").value = conference.name || "";
+            document.getElementById("inputAbstractDue").value = formatDateTime(conference.abstract_due);
+            document.getElementById("abstractTimeZone").value = conference.abstract_timezone || "KST";
+            document.getElementById("inputFullPaperDue").value = formatDateTime(conference.full_paper_due);
+            document.getElementById("fullPaperTimeZone").value = conference.full_paper_timezone || "KST";
+            document.getElementById("inputLocation").value = conference.location || "";
+            document.getElementById("inputConferenceStart").value = conference.conference_start || "";
+            document.getElementById("inputConferenceEnd").value = conference.conference_end || "";
+            document.getElementById("inputURL").value = conference.url || "";
+            document.getElementById("inputRank").value = conference.rank || "";
+            document.getElementById("inputMemo").value = conference.memo || "";
+
+            // 카테고리 체크박스 생성 및 선택 항목 반영
+            const categoryContainer = document.getElementById("categoryContainer");
+            categories.forEach(category => {
+                const checkboxDiv = document.createElement("div");
+                checkboxDiv.classList.add("form-check");
+
+                const checkboxInput = document.createElement("input");
+                checkboxInput.type = "checkbox";
+                checkboxInput.classList.add("form-check-input");
+                checkboxInput.id = `category${category}`;
+                checkboxInput.name = "category";
+                checkboxInput.value = category;
+                if (conference.category && conference.category.includes(category)) {
+                    checkboxInput.checked = true;
+                }
+
+                const checkboxLabel = document.createElement("label");
+                checkboxLabel.classList.add("form-check-label");
+                checkboxLabel.setAttribute("for", `category${category}`);
+                checkboxLabel.textContent = category;
+
+                checkboxDiv.appendChild(checkboxInput);
+                checkboxDiv.appendChild(checkboxLabel);
+                categoryContainer.appendChild(checkboxDiv);
+            });
+        } catch (error) {
+            console.error("Failed to load conference data:", error);
+            alert("Failed to load conference data.");
+        }
+    }
+
+    // 날짜/시간 형식 변환
+    function formatDateTime(dateTime) {
+        if (!dateTime) return "";
+        const date = new Date(dateTime);
+        return date.toISOString().slice(0, 16);
+    }
+
+    document.getElementById("editConferenceForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const jsonObject = {};
+
+        formData.forEach((value, key) => {
+            if (key === "category") {
+                jsonObject[key] = jsonObject[key] || [];
+                jsonObject[key].push(value);
+            } else {
+                jsonObject[key] = value || null;
+            }
+        });
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/conferences/${conferenceId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonObject),
+            });
+
+            if (response.ok) {
+                alert("Conference updated successfully!");
+                window.location.href = "tables.html";
+            } else {
+                throw new Error("Failed to update conference");
+            }
+        } catch (error) {
+            console.error("Error updating conference:", error);
+            alert("Failed to save changes.");
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", loadConferenceData);
+</script>
+</body>
+</html>

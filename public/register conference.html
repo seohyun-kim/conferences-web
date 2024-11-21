@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Register - SB Admin</title>
+        <title>CELL Conference 등록</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
@@ -23,39 +23,106 @@
                                         <form id="conferenceForm">
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="inputName" type="text" placeholder="Enter conference name" name="name" required />
-                                                <label for="inputName">Conference Name</label>
+                                                <label for="inputName">Conference Name 학회 이름 (eg. DATE 2025)</label>
                                             </div>
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputAbstractDue" type="datetime-local" name="abstract_due" required />
-                                                <label for="inputAbstractDue">Abstract Due</label>
+                                            <div class="row mb-3">
+                                                <!-- Abstract Due Input -->
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" id="inputAbstractDue" type="datetime-local" name="abstract_due" required />
+                                                        <label for="inputAbstractDue">Abstract Due 등록 마감일</label>
+                                                    </div>
+                                                </div>
+                                                <!-- Abstract Due Timezone -->
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <select class="form-control" id="abstractTimeZone" name="abstract_timezone" required>
+                                                            <option value="UTC" >UTC</option>
+                                                            <option value="Asia/Seoul"selected>KST</option>
+                                                            <option value="America/Los_Angeles">PST</option>
+                                                            <option value="Etc/GMT+12">AOE</option>
+                                                        </select>
+                                                        <label for="abstractTimeZone">Timezone</label>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputFullPaperDue" type="datetime-local" name="full_paper_due" required />
-                                                <label for="inputFullPaperDue">Full Paper Due</label>
+                                            <div class="row mb-3">
+                                                <!-- Full Paper Due Input -->
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" id="inputFullPaperDue" type="datetime-local" name="full_paper_due" required />
+                                                        <label for="inputFullPaperDue">Full Paper Due 제출 마감일</label>
+                                                        * 정확한 마감 일정을 입력해주세요.
+                                                    </div>
+                                                </div>
+                                                <!-- Full Paper Due Timezone -->
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <select class="form-control" id="fullPaperTimeZone" name="full_paper_timezone" required>
+                                                            <option value="UTC" >UTC</option>
+                                                            <option value="Asia/Seoul"selected>KST</option>
+                                                            <option value="America/Los_Angeles">PST</option>
+                                                            <option value="Etc/GMT+12">AOE</option>
+                                                        </select>
+                                                        <label for="fullPaperTimeZone">Timezone</label>
+                                                        * 타임존에 유의해주세요!!
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="inputLocation" type="text" placeholder="Enter conference location" name="location" required />
-                                                <label for="inputLocation">Location</label>
+                                                <label for="inputLocation">Location 어디서 열리나요?</label>
                                             </div>
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputConferenceStart" type="datetime-local" name="conference_start" required />
-                                                <label for="inputConferenceStart">Conference Start</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputConferenceEnd" type="datetime-local" name="conference_end" required />
-                                                <label for="inputConferenceEnd">Conference End</label>
+                                            <div class="row mb-3">
+                                                <!-- Conference Start -->
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" id="inputConferenceStart" type="date" name="conference_start" />
+                                                        <label for="inputConferenceStart">Conference Start (KST)</label>
+                                                        (정확하지 않아도 됨. 모르면 입력 안해도 됨)
+                                                    </div>
+                                                </div>
+                                                <!-- Conference End -->
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" id="inputConferenceEnd" type="date" name="conference_end" />
+                                                        <label for="inputConferenceEnd">Conference End (KST)</label>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="inputURL" type="url" placeholder="Enter conference URL" name="url" required />
-                                                <label for="inputURL">Conference URL</label>
+                                                <label for="inputURL">Conference URL 공식 홈페이지</label>
                                             </div>
+                                            <div class="form-floating mb-3">
+                                                <select class="form-control" id="inputRank" name="rank">
+                                                    <option value="" disabled selected>Select Rank</option>
+                                                    <option value="A">Top Tier</option>
+                                                    <option value="B">Second Tier</option>
+                                                    <option value="C">etc.</option>
+                                                </select>
+                                                <label for="inputRank">Rank</label>
+                                            </div>
+                                            <div class="mb-3" id="categoryContainer">
+                                                <label class="form-label">Category (다중선택가능)</label>
+                                                <a href="https://cs-deadlines.cin.ufpe.br/" target="_blank" style="display:block; margin-top:10px;">모르겠으면 여기를 참고하세요</a>
+                                                
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" id="inputMemo" placeholder="Enter additional notes" name="memo" style="height: 100px;"></textarea>
+                                                <label for="inputMemo">Memo</label>
+                                            </div>
+
                                             <div class="mt-4 mb-0">
-                                                <button class="btn btn-primary btn-block" type="submit">Register Conference</button>
+                                                <button class="btn btn-primary btn-block" type="submit">Register Conference 등록하기</button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="text-center my-3">
+                            <a class="btn btn-secondary" href="index.html" onclick="return confirmNavigate()">홈으로 이동</a>
                         </div>
                     </div>
                 </main>
@@ -64,7 +131,7 @@
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                            <div class="text-muted">Copyright &copy; CELL DGIST 2024</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;
@@ -78,44 +145,110 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
         <script>
-            document.getElementById("conferenceForm").addEventListener("submit", async function(event) {
-                event.preventDefault(); // Prevent default form submission
-                const formData = new FormData(this); // Get form data
-                const jsonObject = {}; // Create empty object to store form data
-        
-                // Convert FormData to JSON object
-                formData.forEach(function(value, key){
-                    jsonObject[key] = value;
-                });
-        
-                // Convert JSON object to string
-                const jsonData = JSON.stringify(jsonObject);
-                console.log(jsonData);
-                // Send POST request to server
-                try {
-                    const response = await fetch("http://localhost:3000/api/conferences", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: jsonData
+            // 페이지 로드 후 체크박스 생성 및 이벤트 리스너 등록
+            document.addEventListener("DOMContentLoaded", function () {
+                    // 체크박스를 생성할 데이터 배열
+                    const categories = ["Systems - Computer architecture", 
+                                        "Systems - High-performance computing",
+                                        "Systems - Design automation",
+                                        "Systems - Operating systems",
+                                        "Systems - Computer architecture",
+                                        "Systems - Measurement & perf. analysis",
+                                        "Systems - Embedded & real-time systems",
+                                        "Systems - Databases",
+                                        "Systems - Mobile computing",
+                                        "Systems - Software engineering",
+                                        "Systems - Computer security",
+                                        "AI - Artificial intelligence",
+                                        "AI - Machine learning",
+                                        "AI - Natural language processing",
+                                        "AI - Computer vision",
+                                        ];
+
+                    // HTML 요소에 체크박스 생성
+                    const categoryContainer = document.getElementById("categoryContainer");
+
+                    categories.forEach(category => {
+                        const checkboxDiv = document.createElement("div");
+                        checkboxDiv.classList.add("form-check");
+
+                        const checkboxInput = document.createElement("input");
+                        checkboxInput.type = "checkbox";
+                        checkboxInput.classList.add("form-check-input");
+                        checkboxInput.id = `category${category}`;
+                        checkboxInput.name = "category";
+                        checkboxInput.value = category;
+
+                        const checkboxLabel = document.createElement("label");
+                        checkboxLabel.classList.add("form-check-label");
+                        checkboxLabel.setAttribute("for", `category${category}`);
+                        checkboxLabel.textContent = category;
+
+                        checkboxDiv.appendChild(checkboxInput);
+                        checkboxDiv.appendChild(checkboxLabel);
+
+                        categoryContainer.appendChild(checkboxDiv);
                     });
-                    
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                });
+
+
+                document.getElementById("conferenceForm").addEventListener("submit", async function (event) {
+                    event.preventDefault(); // 기본 폼 제출 방지
+                    const formData = new FormData(this); // 폼 데이터 가져오기
+                    const jsonObject = {}; // 데이터 저장 객체
+
+                    // Helper function to get selected values from multiple checkboxes
+                    function getSelectedCategories() {
+                        const checkboxes = document.querySelectorAll('input[name="category"]:checked');
+                        return Array.from(checkboxes).map(checkbox => checkbox.value);
                     }
-                    
-                    const data = await response.json();
-                    console.log('Success:', data);
-                    alert("Conference registration successful!");
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert("An error occurred. Please try again later.");
-                }
-            });
+
+                    // 선택된 카테고리 값을 가져옴
+                    jsonObject.category = getSelectedCategories();
+
+                    // 나머지 폼 필드 처리
+                    formData.forEach(function (value, key) {
+                        if (key !== "category") {
+                            jsonObject[key] = value;
+                        }
+                    });
+
+                    console.log(jsonObject); // 디버그용 출력
+
+                    // 서버로 데이터 전송
+                    try {
+                        const response = await fetch("http://localhost:3000/api/conferences", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(jsonObject),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+
+                        const data = await response.json();
+                        console.log("Success:", data);
+                        alert("학회 정보 등록이 완료되었습니다!");
+
+                        // 폼 필드 비우기
+                        document.getElementById("conferenceForm").reset();
+
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alert("문제가 발생했습니다 ㅜㅜ");
+                    }
+                });
+
+
+            function confirmNavigate() {
+                const userConfirmed = confirm("홈으로 이동하면 입력한 내용이 모두 지워집니다. \n계속하시겠습니까?");
+                return userConfirmed; // true: navigate, false: stay on the page
+            }
+
+
         </script>
-        
-        
-        
     </body>
 </html>

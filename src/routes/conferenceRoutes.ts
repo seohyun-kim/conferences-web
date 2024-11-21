@@ -4,21 +4,23 @@ import { Conference } from '../entity/Conference';
 
 const router = Router();
 
-
 router.post('/', async (req, res) => {
   const conferenceRepository = getRepository(Conference);
-  const { conference_start, conference_end, ...otherFields } = req.body;
+  const { category, conference_start, conference_end, ...otherFields } = req.body;
+
+  // 새로운 conference 객체 생성
   const newConference = conferenceRepository.create({
-      ...otherFields,
-      conference_start: new Date(conference_start),
-      conference_end: new Date(conference_end)
+    ...otherFields,
+    category, // 이미 배열로 처리된 category
+    conference_start: new Date(conference_start),
+    conference_end: new Date(conference_end),
   });
 
   try {
-      const result = await conferenceRepository.save(newConference);
-      res.status(201).json(result);
+    const result = await conferenceRepository.save(newConference);
+    res.status(201).json(result);
   } catch (error) {
-      res.status(400).json({ message: (error as Error).message });
+    res.status(400).json({ message: (error as Error).message });
   }
 });
 
@@ -27,8 +29,10 @@ router.get('/', async (req, res) => {
   try {
     const conferenceRepository = getRepository(Conference);
     const conferences = await conferenceRepository.createQueryBuilder("conference")
-      .orderBy("conference.full_paper_due", "ASC") // ASC 또는 DESC를 사용하여 오름차순 또는 내림차순으로 정렬할 수 있습니다.
+      .orderBy("conference.full_paper_due", "ASC") // ASC 또는 DESC로 정렬
       .getMany();
+
+    // 여기서 category는 이미 배열로 반환됨
     res.status(200).json(conferences);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
@@ -43,6 +47,8 @@ router.get('/:id', async (req, res) => {
       const conference = await conferenceRepository.findOneOrFail({
         where: { id: parseInt(req.params.id) }
       });
+
+      // 'category'는 이미 배열로 저장되어 있으므로 변환할 필요가 없습니다.
       res.json(conference);
   } catch (error) {
       res.status(404).json({ message: 'Conference not found' });
@@ -53,14 +59,20 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const conferenceRepository = getRepository(Conference);
   try {
-      const conference = await conferenceRepository.findOneOrFail({
-        where: { id: parseInt(req.params.id) }
-      });
-      conferenceRepository.merge(conference, req.body);
-      const results = await conferenceRepository.save(conference);
-      res.json(results);
+    const conference = await conferenceRepository.findOneOrFail({
+      where: { id: parseInt(req.params.id) },
+    });
+
+    // category가 배열인 경우 그대로 처리
+    if (req.body.category) {
+      req.body.category = req.body.category; // 배열 그대로 저장
+    }
+
+    conferenceRepository.merge(conference, req.body);
+    const results = await conferenceRepository.save(conference);
+    res.json(results);
   } catch (error) {
-      res.status(404).json({ message: 'Conference not found' });
+    res.status(404).json({ message: 'Conference not found' });
   }
 });
 

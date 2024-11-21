@@ -40,7 +40,7 @@
                                                             <option value="UTC" >UTC</option>
                                                             <option value="Asia/Seoul"selected>KST</option>
                                                             <option value="America/Los_Angeles">PST</option>
-                                                            <option value="Etc/GMT-12">AOE</option>
+                                                            <option value="Etc/GMT+12">AOE</option>
                                                         </select>
                                                         <label for="abstractTimeZone">Timezone</label>
                                                     </div>
@@ -62,7 +62,7 @@
                                                             <option value="UTC" >UTC</option>
                                                             <option value="Asia/Seoul"selected>KST</option>
                                                             <option value="America/Los_Angeles">PST</option>
-                                                            <option value="Etc/GMT-12">AOE</option>
+                                                            <option value="Etc/GMT+12">AOE</option>
                                                         </select>
                                                         <label for="fullPaperTimeZone">Timezone</label>
                                                         * 타임존에 유의해주세요!!
@@ -152,7 +152,6 @@
                                         "Systems - High-performance computing",
                                         "Systems - Design automation",
                                         "Systems - Operating systems",
-                                        "Systems - Computer architecture",
                                         "Systems - Measurement & perf. analysis",
                                         "Systems - Embedded & real-time systems",
                                         "Systems - Databases",
@@ -191,56 +190,67 @@
                     });
                 });
 
+            // moment-timezone 라이브러리를 사용한다고 가정
+            document.getElementById("conferenceForm").addEventListener("submit", async function (event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const jsonObject = {};
 
-                document.getElementById("conferenceForm").addEventListener("submit", async function (event) {
-                    event.preventDefault(); // 기본 폼 제출 방지
-                    const formData = new FormData(this); // 폼 데이터 가져오기
-                    const jsonObject = {}; // 데이터 저장 객체
+                function getSelectedCategories() {
+                    const checkboxes = document.querySelectorAll('input[name="category"]:checked');
+                    const selectedCategories = Array.from(checkboxes).map(checkbox => checkbox.value);
+                    
+                    // `[object Object]`를 방지하려면 JSON.stringify를 사용하여 배열을 문자열로 변환
+                    console.log(`Selected Categories: ${JSON.stringify(selectedCategories)}`);
+                    return selectedCategories;
+                }
 
-                    // Helper function to get selected values from multiple checkboxes
-                    function getSelectedCategories() {
-                        const checkboxes = document.querySelectorAll('input[name="category"]:checked');
-                        return Array.from(checkboxes).map(checkbox => checkbox.value);
-                    }
+                // 원본 시간과 시간대 정보를 그대로 전송
+                const abstractDue = document.getElementById("inputAbstractDue").value;
+                const fullPaperDue = document.getElementById("inputFullPaperDue").value;
+                const abstractTimezone = document.getElementById("abstractTimeZone").value;
+                const fullPaperTimezone = document.getElementById("fullPaperTimeZone").value;
 
-                    // 선택된 카테고리 값을 가져옴
-                    jsonObject.category = getSelectedCategories();
+                jsonObject.abstract_due = abstractDue;
+                jsonObject.abstract_timezone = abstractTimezone;
+                jsonObject.full_paper_due = fullPaperDue;
+                jsonObject.full_paper_timezone = fullPaperTimezone;
 
-                    // 나머지 폼 필드 처리
-                    formData.forEach(function (value, key) {
-                        if (key !== "category") {
-                            jsonObject[key] = value;
-                        }
-                    });
+                // 카테고리 값을 가져와서 JSON 문자열로 변환하여 전송
+                jsonObject.category = JSON.stringify(getSelectedCategories());
 
-                    console.log(jsonObject); // 디버그용 출력
-
-                    // 서버로 데이터 전송
-                    try {
-                        const response = await fetch("http://localhost:3000/api/conferences", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(jsonObject),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error("Network response was not ok");
-                        }
-
-                        const data = await response.json();
-                        console.log("Success:", data);
-                        alert("학회 정보 등록이 완료되었습니다!");
-
-                        // 폼 필드 비우기
-                        document.getElementById("conferenceForm").reset();
-
-                    } catch (error) {
-                        console.error("Error:", error);
-                        alert("문제가 발생했습니다 ㅜㅜ");
+                // 나머지 폼 필드 처리
+                formData.forEach(function (value, key) {
+                    if (key !== "category") {
+                        jsonObject[key] = value;
                     }
                 });
+
+                try {
+                    const response = await fetch("http://localhost:3000/api/conferences", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(jsonObject),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+
+                    const data = await response.json();
+                    console.log("Success:", data);
+                    alert("학회 정보 등록이 완료되었습니다!");
+
+                        // 폼 필드 비우기
+                    document.getElementById("conferenceForm").reset();
+
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("문제가 발생했습니다 ㅜㅜ");
+                }
+            });
 
 
             function confirmNavigate() {

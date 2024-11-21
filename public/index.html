@@ -183,6 +183,7 @@
         <script src="assets/demo/chart-bar-demo.js"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
         <script>
             // Function to fetch conference data from the API and populate the table
             async function fetchConferenceData() {
@@ -193,21 +194,25 @@
 
                     conferences.forEach(conference => {
                         const row = document.createElement('tr');
+                        
+                        // 날짜가 유효한지 확인 후 Luxon 변환 (클라이언트의 타임존으로 변환)
+                        const abstractDue = luxon.DateTime.fromISO(conference.abstract_due).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED);
+                        const fullPaperDue = luxon.DateTime.fromISO(conference.full_paper_due).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED);
+                        const conferenceStart = conference.conference_start ? luxon.DateTime.fromISO(conference.conference_start).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
+                        const conferenceEnd = conference.conference_end ? luxon.DateTime.fromISO(conference.conference_end).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
+                        
                         row.innerHTML = `
                             <td>${conference.name}</td>
-                            <td>${new Date(conference.abstract_due).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
-                            <td style="background-color: LightYellow;">${new Date(conference.full_paper_due).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+                            <td>${abstractDue}</td>
+                            <td style="background-color: LightYellow;">${fullPaperDue}</td>
                             <td>${conference.location}</td>
-                            <td>${new Date(conference.conference_start).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
-                            <td>${new Date(conference.conference_end).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+                            <td>${conferenceStart}</td>
+                            <td>${conferenceEnd}</td>
                             <td>${conference.rank || 'N/A'}</td>
                             <td>${conference.category || 'N/A'}</td>
                             <td>${conference.memo || 'N/A'}</td>
                         `;
-                        // Add event listener to each row to open the URL in a new tab when clicked
-                        row.addEventListener('click', () => {
-                            window.open(conference.url, '_blank');
-                        });
+                        
                         tableBody.appendChild(row);
                     });
                 } catch (error) {
@@ -215,7 +220,6 @@
                 }
             }
 
-            
             // Call the function to fetch and populate conference data when the page loads
             window.onload = fetchConferenceData;
         </script>
@@ -306,13 +310,17 @@
 
                 // HTML 업데이트
                 currentTimeElement.innerHTML = formattedHTML;
-                }
+            }
 
-                // 1초마다 시간 업데이트
-                setInterval(updateCurrentTime, 1000);
+            const date = new Date("2024-11-15T14:59:00Z"); // UTC 시간
+            const kstDate = date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+            console.log(kstDate); // 출력: 2024. 11. 15. 오후 11:59:00
 
-                // 페이지 로드 시 즉시 시간 표시
-                document.addEventListener("DOMContentLoaded", updateCurrentTime);
+            // 1초마다 시간 업데이트
+            setInterval(updateCurrentTime, 1000);
+
+            // 페이지 로드 시 즉시 시간 표시
+            document.addEventListener("DOMContentLoaded", updateCurrentTime);
 
         </script>
     </body>

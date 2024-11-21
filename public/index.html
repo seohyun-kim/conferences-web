@@ -97,7 +97,7 @@
                             </a> -->
                             <a class="nav-link" href="register conference.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Register
+                                Register 학회 등록
                             </a>
 
                             <a class="nav-link" href="tables.html">
@@ -119,6 +119,15 @@
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
+
+                        <div class="mb-4">
+                            <div id="currentTime" class="alert alert-info text-start" role="alert">
+                                Loading current time...
+                                <!-- 폰트 사이즈가 너무 작으면 class 를 이걸로 바꾸세요 class="alert alert-info text-start fs-3" -->
+                            </div>
+                            
+                        </div>
+                        
 
                         <div class="row" id="conferenceCards">
                         </div>
@@ -250,6 +259,60 @@
                 const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
                 return differenceInDays >= 0 ? `${differenceInDays}` : 'Passed';
             }
+
+            function updateCurrentTime() {
+                const currentTimeElement = document.getElementById("currentTime");
+
+                // 각 타임존별 포맷 지정
+                const timeZones = [
+                    { zone: "Asia/Seoul", label: "한국시간 (KST)", offset: 9, isBold: true }, // UTC+9
+                    { zone: "Etc/GMT+12", label: "AOE", offset: -12 }, // UTC-12
+                    { zone: "America/Los_Angeles", label: "PST", offset: -8 }, // UTC-8
+                    { zone: "UTC", label: "UTC", offset: 0 }, // UTC+0
+                ];
+
+                const now = new Date();
+
+                // 각 타임존 시간 생성
+                const timeStrings = timeZones.map(({ zone, label, offset, isBold }) => {
+                    const formattedTime = new Intl.DateTimeFormat("ko-KR", {
+                        timeZone: zone,
+                        hour12: false,
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                    }).format(now);
+
+                    // UTC Offset 표시
+                    const offsetSign = offset >= 0 ? "+" : ""; // 양수인 경우 + 표시
+                    const offsetString = `UTC${offsetSign}${offset}`;
+
+                    // 한국시간(KST)은 볼드 처리
+                    if (isBold) {
+                        return `<strong>${label}: ${formattedTime} (${offsetString})</strong>`;
+                    }
+
+                    return `<strong>${label}</strong> : ${formattedTime} (${offsetString})`;
+                });
+
+                // 출력 형식
+                const formattedHTML = `
+                    ${timeStrings[0]}<br> <!-- 한국시간 -->
+                    ${timeStrings.slice(1).join(" | ")} <!-- 나머지 타임존 -->
+                `;
+
+                // HTML 업데이트
+                currentTimeElement.innerHTML = formattedHTML;
+                }
+
+                // 1초마다 시간 업데이트
+                setInterval(updateCurrentTime, 1000);
+
+                // 페이지 로드 시 즉시 시간 표시
+                document.addEventListener("DOMContentLoaded", updateCurrentTime);
 
         </script>
     </body>

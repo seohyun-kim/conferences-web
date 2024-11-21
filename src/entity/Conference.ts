@@ -25,4 +25,13 @@ export class Conference {
 
   @Column({ nullable: true })
   url?: string;
+
+  @Column({ nullable: true })
+  rank?: string; // 예: 'A', 'B', 'C', 'top', 'second tier'
+
+  @Column({ nullable: true })
+  category?: string; // 예: 'System', 'AI'
+
+  @Column('text', { nullable: true })
+  memo?: string; // 긴 텍스트
 }

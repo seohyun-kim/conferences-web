@@ -128,10 +128,13 @@
                                     <th>Location</th>
                                     <th>Conference Start</th>
                                     <th>Conference End</th>
+                                    <th>Rank</th>
+                                    <th>Category</th>
+                                    <th>Memo</th>
                                 </tr>
                             </thead>
                             <tbody id="conferenceData">
-                            </tbody>
+                            </tbody>                            
                         </table>
                     </div>
                 </div>
@@ -172,10 +175,13 @@
                     <td>${conference.location}</td>
                     <td>${new Date(conference.conference_start).toLocaleDateString()}</td>
                     <td>${new Date(conference.conference_end).toLocaleDateString()}</td>
+                    <td>${conference.rank || 'N/A'}</td>
+                    <td>${conference.category ? conference.category.join(', ') : 'N/A'}</td>
+                    <td>${conference.memo || 'N/A'}</td>
                 `;
                 // Add event listener to each row to open the URL in a new tab when clicked
                 row.addEventListener('click', () => {
-                    window.open(conference.url, '_blank');
+                    openEditPage(conference.id);
                 });
                 tableBody.appendChild(row);
             });
@@ -184,8 +190,14 @@
         }
     }
 
+    // Redirect to the edit page
+    function openEditPage(conferenceId) {
+        window.location.href = `edit_conference.html?id=${conferenceId}`;
+    }
+
     // Call the function to fetch and populate conference data when the page loads
     window.onload = fetchConferenceData;
+
 </script>
 
 </body>

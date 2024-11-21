@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Edit Conference</title>
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Edit Conference</h2>
+    <form id="editConferenceForm">
+        <div class="form-floating mb-3">
+            <input class="form-control" id="inputName" type="text" placeholder="Enter conference name" name="name" required />
+            <label for="inputName">Conference Name</label>
+        </div>
+        <!-- Add all other fields here -->
+        <div class="form-floating mb-3">
+            <textarea class="form-control" id="inputMemo" name="memo" placeholder="Memo"></textarea>
+            <label for="inputMemo">Memo</label>
+        </div>
+        <button class="btn btn-success" type="submit">Save Changes</button>
+    </form>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const conferenceId = urlParams.get('id');
+
+    async function loadConferenceData() {
+        try {
+            const response = await fetch(`http://localhost:3000/api/conferences/${conferenceId}`);
+            const conference = await response.json();
+
+            document.getElementById('inputName').value = conference.name;
+            document.getElementById('inputMemo').value = conference.memo;
+            // Add other fields here
+        } catch (error) {
+            console.error('Error loading conference data:', error);
+        }
+    }
+
+    document.getElementById('editConferenceForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const jsonObject = {};
+        formData.forEach((value, key) => {
+            jsonObject[key] = value;
+        });
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/conferences/${conferenceId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonObject),
+            });
+
+            if (response.ok) {
+                alert('Conference updated successfully!');
+                window.location.href = 'tables.html';
+            } else {
+                throw new Error('Failed to update conference');
+            }
+        } catch (error) {
+            console.error('Error updating conference:', error);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadConferenceData);
+</script>
+</body>
+</html>

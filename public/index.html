@@ -134,7 +134,6 @@
                             <div class="card-body">
                                 <table id="tableConferences" class="table">
                                     <thead>
-
                                         <tr>
                                             <th>Name</th>
                                             <th>Abstract Due</th>
@@ -142,9 +141,12 @@
                                             <th>Location</th>
                                             <th>Conference Start</th>
                                             <th>Conference End</th>
+                                            <th>Rank</th>
+                                            <th>Category</th>
+                                            <th>Memo</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="conferenceData" >
+                                    <tbody id="conferenceData">
                                     </tbody>
                                 </table>
                             </div>
@@ -189,6 +191,9 @@
                             <td>${conference.location}</td>
                             <td>${new Date(conference.conference_start).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
                             <td>${new Date(conference.conference_end).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+                            <td>${conference.rank || 'N/A'}</td>
+                            <td>${conference.category || 'N/A'}</td>
+                            <td>${conference.memo || 'N/A'}</td>
                         `;
                         // Add event listener to each row to open the URL in a new tab when clicked
                         row.addEventListener('click', () => {
@@ -200,6 +205,7 @@
                     console.error('Error fetching conference data:', error);
                 }
             }
+
             
             // Call the function to fetch and populate conference data when the page loads
             window.onload = fetchConferenceData;

@@ -2,12 +2,14 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "luxon": "^3.5.0",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20"
   },
   "scripts": {
-    "start": "nodemon src/index.ts --exec ts-node"
+    "start": "nodemon src/index.ts --exec ts-node",
+    "dev": "ts-node src/database-init.ts && nodemon src/index.ts --exec ts-node"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.5",

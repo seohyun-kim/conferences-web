@@ -229,10 +229,19 @@
                     const response = await fetch('http://conference.selen.live/api/conferences');
                     const conferences = await response.json();
                     
+                    // 현재 시간 가져오기
+                    const now = new Date();
+                    
+                    // 마감일 기준으로 필터링 및 정렬
+                    const validConferences = conferences
+                        .filter(conference => new Date(conference.full_paper_due) >= now) // 지난 마감일 제외
+                        .sort((a, b) => new Date(a.full_paper_due) - new Date(b.full_paper_due)) // 마감일 오름차순 정렬
+                        .slice(0, 4); // 상위 4개 선택
+
                     const conferenceCardsContainer = document.getElementById('conferenceCards');
-                    conferences.slice(0, 4).forEach((conference, index) => {
+                    validConferences.forEach((conference, index) => {
                         const cardColorClasses = ['bg-primary', 'bg-warning', 'bg-success', 'bg-danger'];
-                        const cardColorClass = cardColorClasses[index];
+                        const cardColorClass = cardColorClasses[index % cardColorClasses.length];
 
                         const card = document.createElement('div');
                         card.classList.add('col-xl-3', 'col-md-6');
@@ -241,7 +250,9 @@
 
                         const cardContent = `
                             <div class="card ${cardColorClass} text-white mb-4">
-                                <div class="card-body" id="due${index + 1}">[D-${calculateDaysLeft(new Date(conference.full_paper_due))}] ${conference.name}</div>
+                                <div class="card-body" id="due${index + 1}">
+                                    [D-${calculateDaysLeft(new Date(conference.full_paper_due))}] ${conference.name}
+                                </div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="${conference.url}" id="link${index + 1}" target="_blank">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -263,7 +274,6 @@
                 const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
                 return differenceInDays >= 0 ? `${differenceInDays}` : 'Passed';
             }
-
             function updateCurrentTime() {
                 const currentTimeElement = document.getElementById("currentTime");
 

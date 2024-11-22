@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getRepository } from 'typeorm';
+import { Repository, getRepository } from 'typeorm';
 import { Conference } from '../entity/Conference';
 const { DateTime } = require('luxon');
 
@@ -12,10 +12,38 @@ function convertToTimezone(datetime: any, timezone: any) {
 
   // 주어진 타임존을 기준으로 파싱된 시간을 UTC로 변환
   const utcDate = convertedDate.toUTC();
-
-  console.log("변환된 시간 (UTC) : ", utcDate.toString());
   return utcDate.toISO();  // UTC로 변환된 ISO 문자열 반환
 }
+
+// 공통 함수: 특정 ID에 해당하는 데이터 또는 모든 데이터 가져오기
+async function fetchConferences(conferenceRepository: Repository<Conference>, id: number | null = null) {
+  const queryBuilder = conferenceRepository.createQueryBuilder("conference");
+
+  if (id) {
+    queryBuilder.where("conference.id = :id", { id });
+  }
+
+  queryBuilder.orderBy("conference.full_paper_due", "ASC");
+
+  try {
+    const result = id ? await queryBuilder.getOne() : await queryBuilder.getMany();
+
+    // 로그 출력: 가져온 데이터 확인
+    console.log(
+      id 
+        ? `Fetched conference with ID ${id}:` 
+        : "Fetched all conferences:",
+      result
+    );
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching conferences:", error);
+    throw error;
+  }
+}
+
+
 
 router.post('/', async (req, res) => {
   const conferenceRepository = getRepository(Conference);
@@ -53,53 +81,54 @@ router.post('/', async (req, res) => {
 });
 
 
-// GET - 모든 학회 정보 조회
+// GET / - 모든 학회 정보 조회
 router.get('/', async (req, res) => {
+  const conferenceRepository = getRepository(Conference);
   try {
-    const conferenceRepository = getRepository(Conference);
-    const conferences = await conferenceRepository.createQueryBuilder("conference")
-      .orderBy("conference.full_paper_due", "ASC") // full_paper_due를 기준으로 정렬
-      .getMany();
+    const conferences = await fetchConferences(conferenceRepository);
 
-    // 학회 정보 반환 (변환된 시간 포함)
     res.status(200).json(conferences);
+    console.log(req.body)
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching conferences: ", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
 
 
-
-// GET - 특정 학회 정보 조회
+// GET /:id - 특정 학회 정보 조회
 router.get('/:id', async (req, res) => {
   const conferenceRepository = getRepository(Conference);
   try {
-    const conference = await conferenceRepository.findOneOrFail({
-      where: { id: parseInt(req.params.id) }
-    });
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid conference ID" });
+    }
 
-    // 클라이언트가 요청한 타임존을 가져옵니다. (예: 'Asia/Seoul' 등)
-    const clientTimezone = req.query.timezone || 'Asia/Seoul'; // 기본값은 KST
+    const conference = await fetchConferences(conferenceRepository, id);
 
-    // 시간 변환
-    const conferenceWithConvertedDates = {
-      ...conference,
-      abstract_due: conference.abstract_due ? DateTime.fromISO(conference.abstract_due).setZone(clientTimezone).toISO() : null,
-      full_paper_due: conference.full_paper_due ? DateTime.fromISO(conference.full_paper_due).setZone(clientTimezone).toISO() : null,
-      conference_start: conference.conference_start ? DateTime.fromJSDate(conference.conference_start).setZone(clientTimezone).toISO() : null,
-      conference_end: conference.conference_end ? DateTime.fromJSDate(conference.conference_end).setZone(clientTimezone).toISO() : null,
-    };
+    if (!conference) {
+      return res.status(404).json({ message: "Conference not found" });
+    }
 
-    res.json(conferenceWithConvertedDates);
+    console.log(req.body)
+
+    res.status(200).json(conference);
   } catch (error) {
-    res.status(404).json({ message: 'Conference not found' });
+    console.error("Error fetching conference by ID: ", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 
 // PUT - 학회 정보 수정
 router.put('/:id', async (req, res) => {
+  console.log("Request Params: ", req.params);
+  console.log("/:id put")
+  console.log(req.body)
+
   const conferenceRepository = getRepository(Conference);
   try {
     const conference = await conferenceRepository.findOneOrFail({

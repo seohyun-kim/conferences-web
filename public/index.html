@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
+        <meta name="base-url" content="http://conference.selen.live/">
         <title>CS Conference Dashboard</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
@@ -45,7 +46,7 @@
                             <div class="sb-sidenav-menu-heading">Core</div>
                             <a class="nav-link" href="index.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
+                                Dashboard 홈
                             </a>
                             <!-- <div class="sb-sidenav-menu-heading">Interface</div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
@@ -102,7 +103,7 @@
 
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Table
+                                Table 관리
                             </a>
                         </div>
                     </div>
@@ -117,7 +118,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Conferences Dashboard</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <li class="breadcrumb-item active">우리 연구실에서 관심을 가지고 있는 학회 목록입니다.</li>
                         </ol>
 
                         <div class="mb-4">
@@ -127,11 +128,11 @@
                             </div>
                             
                         </div>
-                        
+                        * Full Paper Due 임박 순으로 4개 보여줍니다.
 
                         <div class="row" id="conferenceCards">
                         </div>
-                        
+
                         
                         
                         <div class="card mb-4">
@@ -188,7 +189,7 @@
             // Function to fetch conference data from the API and populate the table
             async function fetchConferenceData() {
                 try {
-                    const response = await fetch('http://localhost:3000/api/conferences');
+                    const response = await fetch(`${BASE_URL}api/conferences`); 
                     const conferences = await response.json();
                     const tableBody = document.getElementById('conferenceData');
 
@@ -202,7 +203,7 @@
                         const conferenceEnd = conference.conference_end ? luxon.DateTime.fromISO(conference.conference_end).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
                         
                         row.innerHTML = `
-                            <td>${conference.name}</td>
+                            <td><a href="${conference.url}" target="_blank" style="color: blue; text-decoration: underline;">${conference.name}</a></td>
                             <td>${abstractDue}</td>
                             <td style="background-color: LightYellow;">${fullPaperDue}</td>
                             <td>${conference.location}</td>
@@ -224,15 +225,26 @@
             window.onload = fetchConferenceData;
         </script>
         <script>
+            const BASE_URL = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
             document.addEventListener("DOMContentLoaded", async () => {
                 try {
-                    const response = await fetch('http://localhost:3000/api/conferences');
+                    const response = await fetch(`${BASE_URL}api/conferences`); 
                     const conferences = await response.json();
                     
+                    // 현재 시간 가져오기
+                    const now = new Date();
+                    
+                    // 마감일 기준으로 필터링 및 정렬
+                    const validConferences = conferences
+                        .filter(conference => new Date(conference.full_paper_due) >= now) // 지난 마감일 제외
+                        .sort((a, b) => new Date(a.full_paper_due) - new Date(b.full_paper_due)) // 마감일 오름차순 정렬
+                        .slice(0, 4); // 상위 4개 선택
+
                     const conferenceCardsContainer = document.getElementById('conferenceCards');
-                    conferences.slice(0, 4).forEach((conference, index) => {
+                    validConferences.forEach((conference, index) => {
                         const cardColorClasses = ['bg-primary', 'bg-warning', 'bg-success', 'bg-danger'];
-                        const cardColorClass = cardColorClasses[index];
+                        const cardColorClass = cardColorClasses[index % cardColorClasses.length];
 
                         const card = document.createElement('div');
                         card.classList.add('col-xl-3', 'col-md-6');
@@ -241,9 +253,11 @@
 
                         const cardContent = `
                             <div class="card ${cardColorClass} text-white mb-4">
-                                <div class="card-body" id="due${index + 1}">[D-${calculateDaysLeft(new Date(conference.full_paper_due))}] ${conference.name}</div>
+                                <div class="card-body" id="due${index + 1}">
+                                    [D-${calculateDaysLeft(new Date(conference.full_paper_due))}] ${conference.name}
+                                </div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="${conference.url}" id="link${index + 1}" target="_blank">View Details</a>
+                                    <a class="small text-white stretched-link" href="${conference.url}" id="link${index + 1}" target="_blank">홈페이지 이동</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
@@ -263,7 +277,6 @@
                 const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
                 return differenceInDays >= 0 ? `${differenceInDays}` : 'Passed';
             }
-
             function updateCurrentTime() {
                 const currentTimeElement = document.getElementById("currentTime");
 
@@ -311,10 +324,6 @@
                 // HTML 업데이트
                 currentTimeElement.innerHTML = formattedHTML;
             }
-
-            const date = new Date("2024-11-15T14:59:00Z"); // UTC 시간
-            const kstDate = date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
-            console.log(kstDate); // 출력: 2024. 11. 15. 오후 11:59:00
 
             // 1초마다 시간 업데이트
             setInterval(updateCurrentTime, 1000);

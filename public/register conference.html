@@ -6,7 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>CELL Conference 등록</title>
+        <meta name="base-url" content="http://conference.selen.live/">
+        <title>Conference 등록</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
@@ -18,7 +19,7 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-7">
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Conference Registration</h3></div>
+                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">학회 정보</h3></div>
                                     <div class="card-body">
                                         <form id="conferenceForm">
                                             <div class="form-floating mb-3">
@@ -162,6 +163,7 @@
                                         "AI - Machine learning",
                                         "AI - Natural language processing",
                                         "AI - Computer vision",
+                                        "Robotics",
                                         ];
 
                     // HTML 요소에 체크박스 생성
@@ -226,8 +228,12 @@
                     }
                 });
 
+                // meta 태그에서 BASE_URL 읽기
+                const BASE_URL = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
+                // fetch 요청에서 BASE_URL 사용
                 try {
-                    const response = await fetch("http://localhost:3000/api/conferences", {
+                    const response = await fetch(`${BASE_URL}api/conferences`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

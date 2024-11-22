@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+    <meta name="base-url" content="http://conference.selen.live/">
     <title>Tables - SB Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
@@ -14,7 +15,7 @@
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="index.html">Start Bootstrap</a>
+    <a class="navbar-brand ps-3" href="index.html">CELL DGIST</a>
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
     <!-- Navbar Search-->
@@ -45,9 +46,23 @@
                     <div class="sb-sidenav-menu-heading">Core</div>
                     <a class="nav-link" href="index.html">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Dashboard
+                        Dashboard 홈
                     </a>
-                    <div class="sb-sidenav-menu-heading">Interface</div>
+                    <div class="sb-sidenav-menu-heading">CONFERENCES</div>
+                    <!-- <a class="nav-link" href="charts.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                        Charts
+                    </a> -->
+                    <a class="nav-link" href="register conference.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                        Register 학회 등록
+                    </a>
+
+                    <a class="nav-link" href="tables.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                        Table 관리
+                    </a>
+                    <!-- <div class="sb-sidenav-menu-heading">Interface</div>
                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                         Layouts
@@ -58,8 +73,8 @@
                             <a class="nav-link" href="layout-static.html">Static Navigation</a>
                             <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
                         </nav>
-                    </div>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                    </div> -->
+                    <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                         Pages
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -89,7 +104,7 @@
                                 </nav>
                             </div>
                         </nav>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="sb-sidenav-footer">
@@ -101,16 +116,14 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Target Conferences</h1>
+                <h1 class="mt-4">Conference Table 관리 페이지</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
                     <li class="breadcrumb-item active">Tables</li>
                 </ol>
                 <div class="card mb-4">
                     <div class="card-body">
-                        DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the
-                        <a target="_blank" href="https://datatables.net/">official DataTables documentation</a>
-                        .
+                        여기에서 학회 정보를 수정하고 삭제할 수 있습니다. 
                     </div>
                 </div>
                 <div class="card mb-4">
@@ -160,9 +173,12 @@
 <script src="js/datatables-simple-demo.js"></script>
 <script>
     // Function to fetch conference data from the API and populate the table
+    const BASE_URL = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
+
     async function fetchConferenceData() {
         try {
-            const response = await fetch('http://localhost:3000/api/conferences');
+            const response = await fetch(`${BASE_URL}api/conferences`);
             const conferences = await response.json();
             const tableBody = document.getElementById('conferenceData');
 

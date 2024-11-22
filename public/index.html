@@ -203,7 +203,7 @@
                         const conferenceEnd = conference.conference_end ? luxon.DateTime.fromISO(conference.conference_end).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
                         
                         row.innerHTML = `
-                            <td>${conference.name}</td>
+                            <td><a href="${conference.url}" target="_blank" style="color: blue; text-decoration: underline;">${conference.name}</a></td>
                             <td>${abstractDue}</td>
                             <td style="background-color: LightYellow;">${fullPaperDue}</td>
                             <td>${conference.location}</td>
@@ -213,11 +213,6 @@
                             <td>${conference.category || 'N/A'}</td>
                             <td>${conference.memo || 'N/A'}</td>
                         `;
-                        
-                        // 클릭 이벤트 추가
-                        row.addEventListener('click', () => {
-                            window.open(conference.url, '_blank'); // 새 탭에서 열기
-                        });
                         
                         tableBody.appendChild(row);
                     });

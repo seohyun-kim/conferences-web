@@ -15,48 +15,27 @@
             <input class="form-control" id="inputName" type="text" name="name" required />
             <label for="inputName">Conference Name 학회 이름 (eg. DATE 2025)</label>
         </div>
+        <!-- Abstract Due -->
         <div class="row mb-3">
-            <!-- Abstract Due Input -->
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input class="form-control" id="inputAbstractDue" type="datetime-local" name="abstract_due" required />
-                    <label for="inputAbstractDue">Abstract Due 등록 마감일</label>
-                </div>
-            </div>
-            <!-- Abstract Due Timezone -->
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <select class="form-control" id="abstractTimeZone" name="abstract_timezone" required>
-                        <option value="UTC">UTC</option>
-                        <option value="Asia/Seoul" selected>KST</option>
-                        <option value="America/Los_Angeles">PST</option>
-                        <option value="Etc/GMT+12">AOE</option>
-                    </select>
-                    <label for="abstractTimeZone">Timezone</label>
+                    <p class="form-control-plaintext" id="displayAbstractDue">Loading...</p>
+                    <label for="displayAbstractDue">Abstract Due 등록 마감일 (KST)</label>
                 </div>
             </div>
         </div>
+
+        <!-- Full Paper Due -->
         <div class="row mb-3">
-            <!-- Full Paper Due Input -->
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input class="form-control" id="inputFullPaperDue" type="datetime-local" name="full_paper_due" required />
-                    <label for="inputFullPaperDue">Full Paper Due 제출 마감일</label>
-                </div>
-            </div>
-            <!-- Full Paper Due Timezone -->
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <select class="form-control" id="fullPaperTimeZone" name="full_paper_timezone" required>
-                        <option value="UTC">UTC</option>
-                        <option value="Asia/Seoul" selected>KST</option>
-                        <option value="America/Los_Angeles">PST</option>
-                        <option value="Etc/GMT+12">AOE</option>
-                    </select>
-                    <label for="fullPaperTimeZone">Timezone</label>
+                    <p class="form-control-plaintext" id="displayFullPaperDue">Loading...</p>
+                    <label for="displayFullPaperDue">Full Paper Due 제출 마감일 (KST)</label>
                 </div>
             </div>
         </div>
+
+
         <div class="form-floating mb-3">
             <input class="form-control" id="inputLocation" type="text" name="location" required />
             <label for="inputLocation">Location</label>
@@ -128,26 +107,46 @@
 
     const BASE_URL = document.querySelector('meta[name="base-url"]').getAttribute('content');
 
-
-    // 서버에서 데이터 가져오기
     async function loadConferenceData() {
         try {
             const response = await fetch(`${BASE_URL}api/conferences/${conferenceId}`);
             const conference = await response.json();
 
+            console.log("Loaded conference data:", conference);
+
+            // KST 기준으로 시간 표시
+            document.getElementById("displayAbstractDue").textContent = conference.abstract_due
+                ? new Intl.DateTimeFormat("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                    timeZone: "Asia/Seoul",
+                }).format(new Date(conference.abstract_due))
+                : "Not specified";
+
+            document.getElementById("displayFullPaperDue").textContent = conference.full_paper_due
+                ? new Intl.DateTimeFormat("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                    timeZone: "Asia/Seoul",
+                }).format(new Date(conference.full_paper_due))
+                : "Not specified";
+
+            // 다른 필드 처리
             document.getElementById("inputName").value = conference.name || "";
-            document.getElementById("inputAbstractDue").value = formatDateTime(conference.abstract_due);
-            document.getElementById("abstractTimeZone").value = conference.abstract_timezone || "KST";
-            document.getElementById("inputFullPaperDue").value = formatDateTime(conference.full_paper_due);
-            document.getElementById("fullPaperTimeZone").value = conference.full_paper_timezone || "KST";
             document.getElementById("inputLocation").value = conference.location || "";
-            document.getElementById("inputConferenceStart").value = conference.conference_start || "";
-            document.getElementById("inputConferenceEnd").value = conference.conference_end || "";
             document.getElementById("inputURL").value = conference.url || "";
             document.getElementById("inputRank").value = conference.rank || "";
             document.getElementById("inputMemo").value = conference.memo || "";
 
-            // 카테고리 체크박스 생성 및 선택 항목 반영
+            // 카테고리 처리
             const categoryContainer = document.getElementById("categoryContainer");
             categories.forEach(category => {
                 const checkboxDiv = document.createElement("div");
@@ -172,18 +171,30 @@
                 checkboxDiv.appendChild(checkboxLabel);
                 categoryContainer.appendChild(checkboxDiv);
             });
+
         } catch (error) {
             console.error("Failed to load conference data:", error);
             alert("Failed to load conference data.");
         }
     }
 
-    // 날짜/시간 형식 변환
+
+    // 날짜와 시간 변환 (datetime-local)
     function formatDateTime(dateTime) {
-        if (!dateTime) return "";
+        console.log("formatDateTime called")
+        if (!dateTime || isNaN(Date.parse(dateTime))) return "";
         const date = new Date(dateTime);
-        return date.toISOString().slice(0, 16);
+        const isoString = date.toISOString(); // "2025-06-09T00:00:00.000Z"
+        return isoString.slice(0, 16); // "2025-06-09T00:00"
     }
+
+    // 날짜 변환 (date)
+    function formatDate(dateTime) {
+        if (!dateTime || isNaN(Date.parse(dateTime))) return "";
+        const date = new Date(dateTime);
+        return date.toISOString().slice(0, 10); // "2025-06-09"
+    }
+
 
     document.getElementById("editConferenceForm").addEventListener("submit", async function (event) {
         event.preventDefault();
@@ -200,7 +211,7 @@
         });
 
         try {
-            const response = await fetch(`http://localhost:3000/api/conferences/${conferenceId}`, {
+            const response = await fetch(`${BASE_URL}api/conferences/${conferenceId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

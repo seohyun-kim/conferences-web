@@ -9,7 +9,7 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Edit Conference</h2>
+    <h2>학회 정보 수정하기</h2>
     <form id="editConferenceForm">
         <div class="form-floating mb-3">
             <input class="form-control" id="inputName" type="text" name="name" required />
@@ -31,6 +31,7 @@
                 <div class="form-floating">
                     <p class="form-control-plaintext" id="displayFullPaperDue">Loading...</p>
                     <label for="displayFullPaperDue">Full Paper Due 제출 마감일 (KST)</label>
+                    * 마감 시간을 고치려면 삭제 후 재등록 해주세요.
                 </div>
             </div>
         </div>
@@ -77,8 +78,10 @@
             <label for="inputMemo">Memo</label>
         </div>
         <div class="mt-4">
-            <button class="btn btn-success" type="submit">Save Changes</button>
-            <a class="btn btn-secondary" href="tables.html">Cancel</a>
+            <button class="btn btn-success" type="submit">변경사항 저장</button>
+            <a class="btn btn-secondary" href="tables.html">취소</a>
+            <button id="deleteConference" class="btn btn-danger">삭제하기</button>
+
         </div>
     </form>
 </div>
@@ -115,29 +118,39 @@
             console.log("Loaded conference data:", conference);
 
             // KST 기준으로 시간 표시
-            document.getElementById("displayAbstractDue").textContent = conference.abstract_due
-                ? new Intl.DateTimeFormat("en-US", {
+            document.getElementById("displayAbstractDue").innerHTML = conference.abstract_due
+                ? `<b>${new Intl.DateTimeFormat("ko-KR", {
                     year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
                     hour12: false,
                     timeZone: "Asia/Seoul",
                 }).format(new Date(conference.abstract_due))
+                    .replace(/\./g, "년 ")
+                    .replace(" ", "월 ")
+                    .replace(":00", "분")
+                    .replace(":", "시 ")}분</b> `
                 : "Not specified";
 
-            document.getElementById("displayFullPaperDue").textContent = conference.full_paper_due
-                ? new Intl.DateTimeFormat("en-US", {
+            document.getElementById("displayFullPaperDue").innerHTML = conference.full_paper_due
+                ? `<b>${new Intl.DateTimeFormat("ko-KR", {
                     year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
                     hour12: false,
                     timeZone: "Asia/Seoul",
                 }).format(new Date(conference.full_paper_due))
+                    .replace(/\./g, "년 ")
+                    .replace(" ", "월 ")
+                    .replace(":00", "분")
+                    .replace(":", "시 ")}분</b>`
                 : "Not specified";
+
+
 
             // 다른 필드 처리
             document.getElementById("inputName").value = conference.name || "";
@@ -172,8 +185,34 @@
                 categoryContainer.appendChild(checkboxDiv);
             });
 
+            // 삭제 버튼 이벤트 핸들러 추가
+            const deleteButton = document.getElementById("deleteConference");
+            deleteButton.addEventListener("click", async () => {
+                // 한 번만 삭제 확인
+                const confirmation = confirm(`정말 "${conference.name}"를 삭제하시겠습니까?`);
+                if (!confirmation) return;
+
+                // 삭제 요청
+                try {
+                    const deleteResponse = await fetch(`${BASE_URL}api/conferences/${conferenceId}`, {
+                        method: "DELETE",
+                    });
+
+                    if (deleteResponse.ok) {
+                        alert("성공적으로 삭제 되었습니다.");
+                        // 홈 화면으로 리다이렉트
+                        window.location.href = `${BASE_URL}`;
+                    } else {
+                        alert("삭제 실패 ㅠㅠ");
+                    }
+                } catch (error) {
+                    console.error("삭제중 에러 :", error);
+                    alert("An error occurred while trying to delete the conference.");
+                }
+            });
+
         } catch (error) {
-            console.error("Failed to load conference data:", error);
+            console.error("로딩중 에러 :", error);
             alert("Failed to load conference data.");
         }
     }

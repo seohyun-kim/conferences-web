@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+    <meta name="base-url" content="http://conference.selen.live/">
     <title>Tables - SB Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
@@ -108,9 +109,7 @@
                 </ol>
                 <div class="card mb-4">
                     <div class="card-body">
-                        DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the
-                        <a target="_blank" href="https://datatables.net/">official DataTables documentation</a>
-                        .
+                        여기에서 학회 정보를 수정하고 삭제할 수 있습니다. 
                     </div>
                 </div>
                 <div class="card mb-4">
@@ -160,9 +159,12 @@
 <script src="js/datatables-simple-demo.js"></script>
 <script>
     // Function to fetch conference data from the API and populate the table
+    const BASE_URL = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
+
     async function fetchConferenceData() {
         try {
-            const response = await fetch('http://localhost:3000/api/conferences');
+            const response = await fetch(`${BASE_URL}api/conferences`);
             const conferences = await response.json();
             const tableBody = document.getElementById('conferenceData');
 

@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
+        <meta name="base-url" content="http://conference.selen.live/">
         <title>CELL Conference 등록</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -227,8 +228,12 @@
                     }
                 });
 
+                // meta 태그에서 BASE_URL 읽기
+                const BASE_URL = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
+                // fetch 요청에서 BASE_URL 사용
                 try {
-                    const response = await fetch("http://conference.selen.live/api/conferences", {
+                    const response = await fetch(`${BASE_URL}api/conferences`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

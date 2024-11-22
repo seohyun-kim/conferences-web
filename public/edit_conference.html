@@ -196,10 +196,15 @@
 
             // 삭제 버튼 이벤트 핸들러 추가
             const deleteButton = document.getElementById("deleteConference");
-            deleteButton.addEventListener("click", async () => {
+            deleteButton.addEventListener("click", async (event) => {
+                event.preventDefault(); // 기본 동작 방지
+
                 // 한 번만 삭제 확인
                 const confirmation = confirm(`정말 "${conference.name}"를 삭제하시겠습니까?`);
-                if (!confirmation) return;
+                if (!confirmation) {
+                    // 사용자가 취소를 선택하면 아무 작업도 하지 않음
+                    return;
+                }
 
                 // 삭제 요청
                 try {
@@ -219,6 +224,7 @@
                     alert("An error occurred while trying to delete the conference.");
                 }
             });
+
 
         } catch (error) {
             console.error("로딩중 에러 :", error);

@@ -103,7 +103,7 @@
 
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Table
+                                Table 관리
                             </a>
                         </div>
                     </div>
@@ -213,6 +213,11 @@
                             <td>${conference.category || 'N/A'}</td>
                             <td>${conference.memo || 'N/A'}</td>
                         `;
+                        
+                        // 클릭 이벤트 추가
+                        row.addEventListener('click', () => {
+                            window.open(conference.url, '_blank'); // 새 탭에서 열기
+                        });
                         
                         tableBody.appendChild(row);
                     });

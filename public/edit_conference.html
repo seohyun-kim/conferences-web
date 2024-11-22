@@ -46,14 +46,14 @@
             <div class="col-md-6">
                 <div class="form-floating">
                     <input class="form-control" id="inputConferenceStart" type="date" name="conference_start" required />
-                    <label for="inputConferenceStart">Conference Start (KST)</label>
+                    <label for="inputConferenceStart">Conference Start (KST) 월/일/년</label>
                 </div>
             </div>
             <!-- Conference End -->
             <div class="col-md-6">
                 <div class="form-floating">
                     <input class="form-control" id="inputConferenceEnd" type="date" name="conference_end" required />
-                    <label for="inputConferenceEnd">Conference End (KST)</label>
+                    <label for="inputConferenceEnd">Conference End (KST) 월/일/년</label>
                 </div>
             </div>
         </div>
@@ -159,6 +159,14 @@
             document.getElementById("inputURL").value = conference.url || "";
             document.getElementById("inputRank").value = conference.rank || "";
             document.getElementById("inputMemo").value = conference.memo || "";
+            document.getElementById("inputConferenceStart").value = conference.conference_start || ""; 
+            document.getElementById("inputConferenceEnd").value = conference.conference_end || "";     
+
+
+            // 날짜 필드 처리
+            document.getElementById("inputConferenceStart").value = formatDate(conference.conference_start);
+            document.getElementById("inputConferenceEnd").value = formatDate(conference.conference_end);
+
 
             // 카테고리 처리
             const categoryContainer = document.getElementById("categoryContainer");
@@ -234,6 +242,7 @@
         const date = new Date(dateTime);
         return date.toISOString().slice(0, 10); // "2025-06-09"
     }
+
 
 
     document.getElementById("editConferenceForm").addEventListener("submit", async function (event) {

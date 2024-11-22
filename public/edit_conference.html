@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta name="base-url" content="http://conference.selen.live/">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Edit Conference</title>
     <link href="css/styles.css" rel="stylesheet" />
@@ -125,10 +126,13 @@
         "AI - Computer vision",
     ];
 
+    const BASE_URL = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
+
     // 서버에서 데이터 가져오기
     async function loadConferenceData() {
         try {
-            const response = await fetch(`http://localhost:3000/api/conferences/${conferenceId}`);
+            const response = await fetch(`${BASE_URL}api/conferences/${conferenceId}`);
             const conference = await response.json();
 
             document.getElementById("inputName").value = conference.name || "";

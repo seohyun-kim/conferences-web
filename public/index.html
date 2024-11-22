@@ -118,7 +118,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Conferences Dashboard</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <li class="breadcrumb-item active">우리 연구실에서 관심을 가지고 있는 학회 목록입니다.</li>
                         </ol>
 
                         <div class="mb-4">
@@ -128,11 +128,11 @@
                             </div>
                             
                         </div>
-                        
+                        * Full Paper Due 임박 순으로 4개 보여줍니다.
 
                         <div class="row" id="conferenceCards">
                         </div>
-                        
+
                         
                         
                         <div class="card mb-4">
@@ -257,7 +257,7 @@
                                     [D-${calculateDaysLeft(new Date(conference.full_paper_due))}] ${conference.name}
                                 </div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="${conference.url}" id="link${index + 1}" target="_blank">View Details</a>
+                                    <a class="small text-white stretched-link" href="${conference.url}" id="link${index + 1}" target="_blank">홈페이지 이동</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>

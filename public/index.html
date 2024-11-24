@@ -142,6 +142,10 @@
                                    (각 항목을 클릭하면 컨퍼런스 페이지로 이동합니다.)
                             </div>
                             <div class="card-body">
+                                <div class="d-flex justify-content-end mb-3">
+                                    <button id="togglePastConferences" class="btn btn-secondary">지난 일정 포함</button>
+                                </div>
+
                                 <table id="tableConferences" class="table">
                                     <thead>
                                         <tr>
@@ -187,39 +191,60 @@
         <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
         <script>
             // Function to fetch conference data from the API and populate the table
+            let showPastConferences = false; // 전체보기 토글 상태 (기본: false)
+
             async function fetchConferenceData() {
                 try {
-                    const response = await fetch(`${BASE_URL}api/conferences`); 
+                    const response = await fetch(`${BASE_URL}api/conferences`);
                     const conferences = await response.json();
-                    const tableBody = document.getElementById('conferenceData');
-
-                    conferences.forEach(conference => {
-                        const row = document.createElement('tr');
-                        
-                        // 날짜가 유효한지 확인 후 Luxon 변환 (클라이언트의 타임존으로 변환)
-                        const abstractDue = luxon.DateTime.fromISO(conference.abstract_due).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED);
-                        const fullPaperDue = luxon.DateTime.fromISO(conference.full_paper_due).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED);
-                        const conferenceStart = conference.conference_start ? luxon.DateTime.fromISO(conference.conference_start).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
-                        const conferenceEnd = conference.conference_end ? luxon.DateTime.fromISO(conference.conference_end).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
-                        
-                        row.innerHTML = `
-                            <td><a href="${conference.url}" target="_blank" style="color: blue; text-decoration: underline;">${conference.name}</a></td>
-                            <td>${abstractDue}</td>
-                            <td style="background-color: LightYellow;">${fullPaperDue}</td>
-                            <td>${conference.location}</td>
-                            <td>${conferenceStart}</td>
-                            <td>${conferenceEnd}</td>
-                            <td>${conference.rank || 'N/A'}</td>
-                            <td>${conference.category || 'N/A'}</td>
-                            <td>${conference.memo || 'N/A'}</td>
-                        `;
-                        
-                        tableBody.appendChild(row);
-                    });
+                    populateConferenceTable(conferences);
                 } catch (error) {
                     console.error('Error fetching conference data:', error);
                 }
             }
+
+            function populateConferenceTable(conferences) {
+                const tableBody = document.getElementById('conferenceData');
+                const now = new Date();
+                tableBody.innerHTML = ""; // 테이블 초기화
+
+                // 컨퍼런스 데이터 필터링 및 정렬
+                const filteredConferences = conferences
+                    .filter(conference => showPastConferences || new Date(conference.full_paper_due) >= now)
+                    .sort((a, b) => new Date(a.full_paper_due) - new Date(b.full_paper_due));
+
+                // 테이블에 데이터 추가
+                filteredConferences.forEach(conference => {
+                    const row = document.createElement('tr');
+
+                    const abstractDue = luxon.DateTime.fromISO(conference.abstract_due).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED);
+                    const fullPaperDue = luxon.DateTime.fromISO(conference.full_paper_due).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED);
+                    const conferenceStart = conference.conference_start ? luxon.DateTime.fromISO(conference.conference_start).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
+                    const conferenceEnd = conference.conference_end ? luxon.DateTime.fromISO(conference.conference_end).setZone('Asia/Seoul').toLocaleString(luxon.DateTime.DATETIME_MED) : 'N/A';
+
+                    row.innerHTML = `
+                        <td><a href="${conference.url}" target="_blank" style="color: blue; text-decoration: underline;">${conference.name}</a></td>
+                        <td>${abstractDue}</td>
+                        <td style="background-color: LightYellow;">${fullPaperDue}</td>
+                        <td>${conference.location}</td>
+                        <td>${conferenceStart}</td>
+                        <td>${conferenceEnd}</td>
+                        <td>${conference.rank || 'N/A'}</td>
+                        <td>${conference.category || 'N/A'}</td>
+                        <td>${conference.memo || 'N/A'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+    // 토글 버튼 클릭 이벤트
+    document.getElementById('togglePastConferences').addEventListener('click', () => {
+        showPastConferences = !showPastConferences; // 토글 상태 변경
+        const button = document.getElementById('togglePastConferences');
+        button.textContent = showPastConferences ? "기본 보기" : "지난 일정 포함"; // 버튼 텍스트 변경
+
+        fetchConferenceData(); // 테이블 갱신
+    });
 
             // Call the function to fetch and populate conference data when the page loads
             window.onload = fetchConferenceData;

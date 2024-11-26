@@ -6,14 +6,19 @@ const { DateTime } = require('luxon');
 const router = Router();
 
 
-function convertToTimezone(datetime: any, timezone: any) {
-  // 입력된 날짜(datetime)를 주어진 타임존(timezone) 기준으로 파싱
-  const convertedDate = DateTime.fromISO(datetime, { zone: timezone });
+export function convertToTimezone(datetime: string, timezone: string): string {
+  // Luxon에서 ISO 8601 형식으로 날짜를 변환
+  const localDate = DateTime.fromISO(datetime, { zone: timezone });
 
-  // 주어진 타임존을 기준으로 파싱된 시간을 UTC로 변환
-  const utcDate = convertedDate.toUTC();
-  return utcDate.toISO();  // UTC로 변환된 ISO 문자열 반환
+  // 유효하지 않은 datetime이나 timezone에 대해 예외를 던짐
+  if (!localDate.isValid) {
+    throw new Error(`Invalid datetime or timezone: ${datetime}, ${timezone}`);
+  }
+
+  // 유효한 경우 UTC로 변환 후 ISO 포맷으로 반환
+  return localDate.toUTC().toISO();
 }
+
 
 // 공통 함수: 특정 ID에 해당하는 데이터 또는 모든 데이터 가져오기
 async function fetchConferences(conferenceRepository: Repository<Conference>, id: number | null = null) {
@@ -88,11 +93,12 @@ router.get('/', async (req, res) => {
     const conferences = await fetchConferences(conferenceRepository);
 
     res.status(200).json(conferences);
-    console.log(req.body)
+    // console.log(req.body)
   } catch (error) {
     console.error("Error fetching conferences: ", error);
     res.status(500).json({ message: "Internal server error" });
   }
+
 });
 
 

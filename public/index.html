@@ -133,14 +133,14 @@
                         <div class="row" id="conferenceCards">
                         </div>
 
-                        
+                        * 실수가 있을 수 있습니다. 반드시 홈페이지에서 더블체크 하세요!
                         
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 Target Conferences
-                                   (각 항목을 클릭하면 컨퍼런스 페이지로 이동합니다.)
                             </div>
+                            
                             <div class="card-body">
                                 <div class="d-flex justify-content-end mb-3">
                                     <button id="togglePastConferences" class="btn btn-secondary">지난 일정 포함</button>
@@ -320,12 +320,21 @@
                 const element = document.getElementById(elementId);
 
                 function refresh() {
-                    element.textContent = calculateTimeLeft(endDate);
+                    const now = new Date();
+                    const utcNow = new Date(now.toISOString()); // UTC 변환
+                    const difference = endDate.getTime() - utcNow.getTime();
+
+                    if (difference <= 0) {
+                        element.textContent = '마감되었습니다';
+                    } else {
+                        element.textContent = calculateTimeLeft(endDate);
+                    }
                 }
 
                 refresh(); // 초기값 설정
                 setInterval(refresh, 1000); // 1초마다 갱신
             }
+
 
             function updateCurrentTime() {
                 const currentTimeElement = document.getElementById("currentTime");

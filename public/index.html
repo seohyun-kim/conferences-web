@@ -254,16 +254,15 @@
 
             document.addEventListener("DOMContentLoaded", async () => {
                 try {
-                    const response = await fetch(`${BASE_URL}api/conferences`); 
+                    const response = await fetch(`${BASE_URL}api/conferences`);
                     const conferences = await response.json();
-                    
-                    // 현재 시간 가져오기
+
                     const now = new Date();
-                    
+
                     // 마감일 기준으로 필터링 및 정렬
                     const validConferences = conferences
-                        .filter(conference => new Date(conference.full_paper_due) >= now) // 지난 마감일 제외
-                        .sort((a, b) => new Date(a.full_paper_due) - new Date(b.full_paper_due)) // 마감일 오름차순 정렬
+                        .filter(conference => new Date(conference.full_paper_due) >= now)
+                        .sort((a, b) => new Date(a.full_paper_due) - new Date(b.full_paper_due))
                         .slice(0, 4); // 상위 4개 선택
 
                     const conferenceCardsContainer = document.getElementById('conferenceCards');
@@ -279,7 +278,9 @@
                         const cardContent = `
                             <div class="card ${cardColorClass} text-white mb-4">
                                 <div class="card-body" id="due${index + 1}">
-                                    [D-${calculateDaysLeft(new Date(conference.full_paper_due))}] ${conference.name}
+                                    <span class="due-date" id="dueDate${index + 1}">Loading...</span>
+                                    <br>
+                                    ${conference.name}
                                 </div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="${conference.url}" id="link${index + 1}" target="_blank">홈페이지 이동</a>
@@ -290,18 +291,42 @@
 
                         card.innerHTML = cardContent;
                         conferenceCardsContainer.appendChild(card);
+
+                        // 디데이 업데이트
+                        updateCountdown(`dueDate${index + 1}`, new Date(conference.full_paper_due));
                     });
                 } catch (error) {
                     console.error('Error fetching conference data:', error);
                 }
             });
 
-            function calculateDaysLeft(endDate) {
-                const today = new Date();
-                const differenceInTime = endDate.getTime() - today.getTime();
-                const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-                return differenceInDays >= 0 ? `${differenceInDays}` : 'Passed';
+            function calculateTimeLeft(endDate) {
+                const now = new Date();
+                const difference = endDate.getTime() - now.getTime();
+
+                if (difference <= 0) {
+                    return '마감되었습니다';
+                }
+
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                return `D- ${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
             }
+
+            function updateCountdown(elementId, endDate) {
+                const element = document.getElementById(elementId);
+
+                function refresh() {
+                    element.textContent = calculateTimeLeft(endDate);
+                }
+
+                refresh(); // 초기값 설정
+                setInterval(refresh, 1000); // 1초마다 갱신
+            }
+
             function updateCurrentTime() {
                 const currentTimeElement = document.getElementById("currentTime");
 

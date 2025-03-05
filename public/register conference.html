@@ -55,6 +55,29 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- Full Paper Due를 Abstract Due 과 동일하게 설정합니다.-->
+                                            <div class="col-md-12">
+                                                <div class="form-check d-flex align-items-center">
+                                                    <input class="form-check-input me-2" type="checkbox" id="sameAsAbstractDue">
+                                                    <label class="form-check-label" for="sameAsAbstractDue">
+                                                        Full Paper Due가 Abstract 과 동일합니다.
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <script>
+                                                document.getElementById("sameAsAbstractDue").addEventListener("change", function () {
+                                                    if (this.checked) {
+                                                        // Abstract Due 입력값을 가져와서 Full Paper Due에도 적용
+                                                        document.getElementById("inputFullPaperDue").value = document.getElementById("inputAbstractDue").value;
+                                                        document.getElementById("fullPaperTimeZone").value = document.getElementById("abstractTimeZone").value;
+                                                    } else {
+                                                        // 체크 해제 시 Full Paper Due 입력값과 타임존 초기화
+                                                        document.getElementById("inputFullPaperDue").value = "";
+                                                        document.getElementById("fullPaperTimeZone").value = "";
+                                                    }
+                                                });
+                                            </script>
                                             <div class="row mb-3">
                                                 <!-- Full Paper Due Input -->
                                                 <div class="col-md-6">

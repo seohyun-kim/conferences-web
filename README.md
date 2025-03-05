@@ -31,6 +31,22 @@ $ npm install
 $ npm start
 ```
 
+## 서버 백그라운드 실행 (PM2)
+```bash
+$ pm2 start "npm run start" --name "conference"
+```
+
+```
+[PM2] Starting /usr/bin/bash in fork_mode (1 instance)
+[PM2] Done.
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 1  │ conference    │ default     │ N/A     │ fork    │ 95557    │ 0s     │ 0    │ online    │ 0%       │ 12.2mb   │ kkwon    │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[PM2][WARN] Current process list is not synchronized with saved list. Type 'pm2 save' to synchronize.
+```
+
 ## Plan
 Long term plan :
  - 웹페이지에서 자동 파싱, 자동 업데이트

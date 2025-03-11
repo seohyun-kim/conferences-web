@@ -8,8 +8,9 @@
 
 
 ## Preview
-![Screenshot from 2024-11-27 02-24-55](https://github.com/user-attachments/assets/2bd3e3e9-8e4d-40ec-a6f7-5c916feac0cb)
-![Screenshot from 2024-11-27 02-25-32](https://github.com/user-attachments/assets/b2433ccf-ed90-45fd-9840-3864bd4f5184)
+![conference selen live_ (2)](https://github.com/user-attachments/assets/839668ed-542c-4736-839c-7b21697b3a15)
+![conference selen live_register%20conference html](https://github.com/user-attachments/assets/dba956f3-a42e-48a6-8cfc-5147b627d912)
+
 
 
 ## How to use

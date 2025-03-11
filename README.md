@@ -46,7 +46,19 @@ $ pm2 start "npm run start" --name "conference"
 └────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
 [PM2][WARN] Current process list is not synchronized with saved list. Type 'pm2 save' to synchronize.
 ```
-
+- PC 부팅 시 자동으로 실행되도록 설정 (PM2 startup)
+  ```
+  $ pm2 startup
+  ```
+  를 실행하면 
+  ```
+  [PM2] To setup the startup script, copy/paste the following command:
+  sudo env PATH=$PATH:/home/user/.nvm/versions/node/v16.15.0/bin pm2 startup systemd -u user --hp /home/user
+  ```
+  이런 명령어가 표시될거고, 여기서 표시된 `sudo env ... pm2 startup systemd` 명령어를 그대로 실행
+  ```
+  $pm2 save
+  ```
 ## Plan
 Long term plan :
  - 웹페이지에서 자동 파싱, 자동 업데이트
